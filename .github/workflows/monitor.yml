@@ -1,0 +1,45 @@
+name: App Health Monitor
+
+# 15分毎にエスコ主要アプリのヘルスを巡回。異常/復旧時のみTeamsへ通知する。
+# public リポなので GitHub Actions は無料・無制限。内部情報(URL一覧/Webhook)は
+# 暗号化 Secret に格納し、コード・ログには出さない。
+on:
+  schedule:
+    - cron: '*/15 * * * *'   # UTC・15分毎(GitHubのスケジュールは多少前後する場合あり)
+  workflow_dispatch: {}
+
+# 同時実行を避ける(前の巡回が動いていたらスキップ)
+concurrency:
+  group: health-monitor
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # 実行間で状態(各アプリのUP/DOWN)を保持 → 「変化時だけ通知」を実現
+      - name: Restore state
+        uses: actions/cache/restore@v4
+        with:
+          path: state
+          key: health-state-${{ github.run_id }}
+          restore-keys: |
+            health-state-
+
+      - name: Run health checks
+        env:
+          MONITOR_TARGETS: ${{ secrets.MONITOR_TARGETS }}
+          TEAMS_WEBHOOK: ${{ secrets.TEAMS_WEBHOOK }}
+        run: bash monitor.sh
+
+      - name: Save state
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: state
+          key: health-state-${{ github.run_id }}
