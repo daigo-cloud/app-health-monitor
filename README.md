@@ -4,7 +4,7 @@
 GitHub Actions が **15分毎** に各アプリへHTTPアクセスし、**異常検知/復旧の瞬間だけ** Teams に通知します(平常時は無通知)。
 
 - 判定: 正常 = HTTP `2xx/3xx/401/403`、異常 = `5xx` もしくは無応答(`000`)
-- 通知: Teams Incoming Webhook(MessageCard)
+- 通知: Teams の Workflows Webhook(Adaptive Card)→ 投稿先 **⚙ インフラ運用** チャネル
 - 状態保持: GitHub Actions キャッシュ(実行間で前回状態を保持し「変化時のみ通知」)
 
 ## 設定(リポジトリ Secrets)
