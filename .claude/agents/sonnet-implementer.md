@@ -1,6 +1,6 @@
 ---
 name: sonnet-implementer
-description: コード実装専用エージェント（model: sonnet 固定）。中〜大規模のコード実装（新機能・複数ファイル変更・リファクタリング・テスト追加/修正）はこのエージェントに委譲する。軽量タスク（AGENTS.md / CLAUDE.md「モデル運用ルール」の定義）は指示役（Fable 5.1）が直接実行する。
+description: コード実装専用エージェント（model: sonnet 固定）。中〜大規模のコード実装（新機能・複数ファイル変更・リファクタリング・テスト追加/修正）はこのエージェントに委譲する。定型の小修正は Haiku に回し、指示役（標準 Opus 5.5）は直接編集しない（AGENTS.md / CLAUDE.md「モデル運用ルール」）。
 model: sonnet
 ---
 
